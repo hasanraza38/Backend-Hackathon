@@ -20,7 +20,6 @@ const productSchema = new Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", 
-      required: true,
     },
     orderItems: [
       {
@@ -28,6 +27,7 @@ const productSchema = new Schema(
         ref: "Order",
       },
     ],
+
   },
   {
     timestamps: true,

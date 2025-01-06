@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema(
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -16,11 +18,30 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "customer"],
+      default: "customer",
+    },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   {
-    timestamps: true,
+    timestamps: true, 
   }
 );
+
+
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

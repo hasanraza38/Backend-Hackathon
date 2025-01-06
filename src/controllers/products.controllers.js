@@ -1,75 +1,89 @@
 import mongoose from "mongoose";
 import Products from "../models/products.models.js";
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
-
 //cloudinary Configuration
-    cloudinary.config({ 
-        cloud_name: process.env.CLOUD_NAME, 
-        api_key: process.env.API_KEY, 
-        api_secret: process.env.API_SECRET
-    });
-    
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
 
 // upload image function
 const uploadImageToCloudinary = async (localpath) => {
-    try {
-      const uploadResult = await cloudinary.uploader.upload(localpath, {
-        resource_type: "auto",
-      });
-      fs.unlinkSync(localpath);
-      return uploadResult.url;
-    } catch (error) {
-      fs.unlinkSync(localpath);
-      return null;
-    }
-  };
-
-
-
-
-
-
-
-//Add Product
-
-const addProduct = async (req, res) => {
-  const { title, description } = req.body;
-
-  if (!title || !description) {
-    res.status(400).json({
-      message: "title or description required",
+  try {
+    const uploadResult = await cloudinary.uploader.upload(localpath, {
+      resource_type: "auto",
     });
-    return;
+    fs.unlinkSync(localpath);
+    return uploadResult.url;
+  } catch (error) {
+    fs.unlinkSync(localpath);
+    return null;
   }
-
-  const product = await Products.create({
-    title,
-    description,
-  });
-
-  res.status(201).json({
-    message: "Product added successfully",
-  });
 };
 
+//Add Product
+const addProduct = async (req, res) => {
+  const { name, description, price, userId } = req.body;
+
+  if (!name)
+    return res.status(400).json({ message: "product name is required" });
+  if (!description)
+    return res.status(400).json({ message: "product description is required" });
+  if (!price)
+    return res.status(400).json({ message: "product price is required" });
+
+  try {
+    let imageUrl = null;
+
+    if (req.file) {
+      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      if (!uploadResult) {
+        return res
+          .status(500)
+          .json({ message: "Error occurred while uploading the image" });
+      }
+      imageUrl = uploadResult;
+    }
+
+    const product = await Products.create({
+      name,
+      description,
+      image: imageUrl,
+      user: userId,
+      price,
+    });
+
+    res.status(201).json({
+      message: "Product added successfully",
+      ...product,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 //Add Product
 
 // get all products
 const getAllProducts = async (req, res) => {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-  
-    const skip = (page - 1) * limit;
-  
-    const products = await Products.find({}).skip(skip).limit(limit);
-    res.status(200).json({
-        products,
-        });
-  };
-  
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+
+  const skip = (page - 1) * limit;
+
+  const products = await Products.find({}).skip(skip).limit(limit);
+  res.status(200).json({
+    products,
+  });
+};
 // get all products
+
 
 // get single product
 const getSingleProduct = async (req, res) => {
@@ -106,7 +120,6 @@ const deleteProduct = async (req, res) => {
 };
 // delete product
 
-
 // edit product
 
 const editProduct = async (req, res) => {
@@ -131,30 +144,11 @@ const editProduct = async (req, res) => {
 // edit product
 
 
-// upload image
-const uploadImage = async (req, res) => {
-  if (!req.file)
-    return res.status(400).json({
-      message: "no image file uploaded",
-    });
 
-  try {
-    const uploadResult = await uploadImageToCloudinary(req.file.path);
-
-    if (!uploadResult)
-      return res
-        .status(500)
-        .json({ message: "error occured while uploading image" });
-
-    res.json({
-      message: "image uploaded successfully",
-      url: uploadResult,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "error occured while uploading image" });
-  }
+export {
+  addProduct,
+  getAllProducts,
+  getSingleProduct,
+  deleteProduct,
+  editProduct,
 };
-
-
-export { addProduct, getAllProducts, getSingleProduct, deleteProduct, editProduct  , uploadImage};
