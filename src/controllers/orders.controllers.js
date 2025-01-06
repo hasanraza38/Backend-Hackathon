@@ -1,73 +1,84 @@
-import mongoose from "mongoose"; 
-import Orders from "../models/order.models.js";
+import Order from "../models/order.models.js";
+import Product from "../models/products.models.js";
 
 const placeOrder = async (req, res) => {
   try {
-    const { products, totalPrice } = req.body;
-    const userId = req.user._id;
+    const { products } = req.body;
 
     if (!products || products.length === 0) {
-      return res.status(400).json({ error: "Products are required." });
+      return res.status(400).json({ message: "No products provided" });
     }
 
-    const newOrder = new Orders({
-      user: userId,
+    const productDetails = await Product.find({ _id: { $in: products } });
+
+    if (productDetails.length !== products.length) {
+      return res.status(400).json({ message: "Some products are invalid" });
+    }
+
+    const totalPrice = productDetails.reduce((sum, product) => sum + product.price, 0);
+
+
+    const order = await Order.create({
+      user: req.user._id,
       products,
       totalPrice,
     });
 
-    return res.status(201).json(newOrder);
+    res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
   } catch (error) {
-    console.error("Error placing order:", error);
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-const listOrdersForUser = async (req, res) => {
+
+
+const getUserOrders = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const orders = await Order.find({ user: req.user._id }).populate("products");
 
-    const orders = await Orders.find({ user: userId }).populate("products");
-
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ message: "No orders found for this user." });
-    }
-
-    return res.status(200).json(orders);
+    res.status(200).json({
+      message: "Orders retrieved successfully",
+      orders,
+    });
   } catch (error) {
-    console.error("Error fetching user orders:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Controller to get details of a single order
-const getOrderDetails = async (req, res) => {
+
+
+
+
+const getOrderById = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      return res.status(400).json({ error: "Invalid order ID." });
-    }
-
-    const order = await Order.findById(orderId).populate("products").exec();
+    const order = await Order.findById(id)
+      .populate("products")
+      .populate("user", "username email"); 
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found." });
+      return res.status(404).json({ message: "Order not found" });
     }
 
-    // Ensure the user can only access their own orders
-    if (order.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ error: "Unauthorized access." });
+    if (order.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Unauthorized access" });
     }
 
-    return res.status(200).json(order);
+    res.status(200).json({
+      message: "Order retrieved successfully",
+      order,
+    });
   } catch (error) {
-    console.error("Error fetching order details:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports = {
-  placeOrder,
-  listOrdersForUser,
-  getOrderDetails,
-};
+
+export {placeOrder , getUserOrders, getOrderById}

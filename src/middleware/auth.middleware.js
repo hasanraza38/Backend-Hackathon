@@ -17,4 +17,4 @@ const authenticateUser = async (req, res, next) => {
  
   // authenticate user middleware
 
-  export default authenticateUser
+  export  {authenticateUser}

@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 import Products from "../models/products.models.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -58,7 +60,7 @@ const addProduct = async (req, res) => {
 
     res.status(201).json({
       message: "Product added successfully",
-      ...product,
+      product,
     });
   } catch (error) {
     console.error(error);

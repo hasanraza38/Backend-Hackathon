@@ -1,6 +1,8 @@
 import express from "express";
 import { addProduct, getAllProducts, getSingleProduct, deleteProduct, editProduct, } from "../controllers/products.controllers.js";
 import { upload } from "../middleware/multer.middleware.js";
+// import { authenticateUser } from "../middleware/auth.middleware.js";
+
 
 const router = express.Router();
 
