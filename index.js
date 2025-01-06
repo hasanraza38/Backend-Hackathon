@@ -6,7 +6,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors"
 import usersRoutes from "./src/routes/users.routes.js"
 import productRoutes from "./src/routes/products.routes.js"
-import nodemailer from "nodemailer"
 
 
 const app = express()
@@ -22,42 +21,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-
-// nodemailer
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false, 
-  auth: {
-    user: "zakary.champlin57@ethereal.email",
-    pass: "rr173s9hvb5v3a5fhE",
-  },
-});
-
-
-app.get("/sendemail" , async (req , res)  => {
-try {
-  const info = await transporter.sendMail({
-    from: '"Zakary Champlin" <zakary.champlin57@ethereal.email>', 
-    to: "92hasanraza689@gmail.com, 92muhammadhasanraza@gmail.com", 
-    subject: "Hello ✔", 
-    text: "Hello world?", 
-    html: "<b>Hello world?</b>", 
-  });
-
-  console.log("Message sent: %s", info.messageId);
-  res.send("email sent");
-} catch (error) {
-  console.log(err);
-}
-})
-
-// nodemailer
-
-// pagination
-
-// pagination
 
 
 // routes
