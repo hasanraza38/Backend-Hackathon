@@ -1,31 +1,7 @@
 import Users from "../models/users.models.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { v2 as cloudinary } from 'cloudinary';
-import fs from "fs";
 
-
-//cloudinary Configuration
-    cloudinary.config({ 
-        cloud_name: process.env.CLOUD_NAME, 
-        api_key: process.env.API_KEY, 
-        api_secret: process.env.API_SECRET
-    });
-    
-
-// upload image function
-const uploadImageToCloudinary = async (localpath) => {
-    try {
-      const uploadResult = await cloudinary.uploader.upload(localpath, {
-        resource_type: "auto",
-      });
-      fs.unlinkSync(localpath);
-      return uploadResult.url;
-    } catch (error) {
-      fs.unlinkSync(localpath);
-      return null;
-    }
-  };
 
 
 
@@ -51,8 +27,9 @@ const generateRefreshToken = (user) => {
 
 //Register User
 const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const {userName, email, password } = req.body;
 
+  if (!userName) return res.status(400).json({ message: "user Name required" });
   if (!email) return res.status(400).json({ message: "email required" });
   if (!password) return res.status(400).json({ message: "password required" });
 
@@ -60,6 +37,7 @@ const registerUser = async (req, res) => {
   if (user) return res.status(401).json({ message: "user already exist" });
   
   const createUser = await Users.create({
+    userName,
     email,
     password,
   });
@@ -71,8 +49,9 @@ const registerUser = async (req, res) => {
 
 // login User
 const loginUser = async (req , res) => {
-  const {email, password} = req.body
+  const {userName, email, password} = req.body
   
+  if (!userName) return res.status(400).json({ message: "user Name required" });
   if (!email) return res.status(400).json({ message: "email required" });
   if (!password) return res.status(400).json({ message: "password required" });
   
@@ -144,29 +123,6 @@ const authenticateUser = async (req, res, next) => {
 
 
 
-// upload image
-const uploadImage = async (req, res) => {
-    if (!req.file)
-      return res.status(400).json({
-        message: "no image file uploaded",
-      });
-  
-    try {
-      const uploadResult = await uploadImageToCloudinary(req.file.path);
-  
-      if (!uploadResult)
-        return res
-          .status(500)
-          .json({ message: "error occured while uploading image" });
-  
-      res.json({
-        message: "image uploaded successfully",
-        url: uploadResult,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "error occured while uploading image" });
-    }
-  };
 
-export {registerUser , loginUser, refreshToken ,logoutUser , authenticateUser , uploadImage}
+
+export {registerUser , loginUser, refreshToken ,logoutUser , authenticateUser , }

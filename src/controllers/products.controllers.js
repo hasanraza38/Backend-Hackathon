@@ -1,5 +1,36 @@
 import mongoose from "mongoose";
 import Products from "../models/products.models.js";
+import { v2 as cloudinary } from 'cloudinary';
+import fs from "fs";
+
+
+//cloudinary Configuration
+    cloudinary.config({ 
+        cloud_name: process.env.CLOUD_NAME, 
+        api_key: process.env.API_KEY, 
+        api_secret: process.env.API_SECRET
+    });
+    
+
+// upload image function
+const uploadImageToCloudinary = async (localpath) => {
+    try {
+      const uploadResult = await cloudinary.uploader.upload(localpath, {
+        resource_type: "auto",
+      });
+      fs.unlinkSync(localpath);
+      return uploadResult.url;
+    } catch (error) {
+      fs.unlinkSync(localpath);
+      return null;
+    }
+  };
+
+
+
+
+
+
 
 //Add Product
 
@@ -28,7 +59,7 @@ const addProduct = async (req, res) => {
 // get all products
 const getAllProducts = async (req, res) => {
     const page = req.query.page || 1;
-    const limit = req.query.limit || 3;
+    const limit = req.query.limit || 10;
   
     const skip = (page - 1) * limit;
   
@@ -100,4 +131,30 @@ const editProduct = async (req, res) => {
 // edit product
 
 
-export { addProduct, getAllProducts, getSingleProduct, deleteProduct, editProduct };
+// upload image
+const uploadImage = async (req, res) => {
+  if (!req.file)
+    return res.status(400).json({
+      message: "no image file uploaded",
+    });
+
+  try {
+    const uploadResult = await uploadImageToCloudinary(req.file.path);
+
+    if (!uploadResult)
+      return res
+        .status(500)
+        .json({ message: "error occured while uploading image" });
+
+    res.json({
+      message: "image uploaded successfully",
+      url: uploadResult,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "error occured while uploading image" });
+  }
+};
+
+
+export { addProduct, getAllProducts, getSingleProduct, deleteProduct, editProduct  , uploadImage};
