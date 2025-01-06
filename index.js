@@ -5,6 +5,7 @@ import connectDB from "./src/db/index.js";
 import cookieParser from "cookie-parser";
 import cors from "cors"
 import usersRoutes from "./src/routes/users.routes.js"
+import productRoutes from "./src/routes/products.routes.js"
 import nodemailer from "nodemailer"
 
 
@@ -54,7 +55,13 @@ try {
 
 // nodemailer
 
+// pagination
+
+// pagination
+
+
 // routes
+app.use("/api/v1", productRoutes)
 app.use("/api/v1", usersRoutes)
 
 connectDB()
