@@ -21,12 +21,12 @@ const productSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", 
     },
-    orderItems: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Order",
-      },
-    ],
+    // orderItems: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Order",
+    //   },
+    // ],
 
   },
   {
