@@ -28,7 +28,7 @@ const uploadImageToCloudinary = async (localpath) => {
 
 //Add Product
 const addProduct = async (req, res) => {
-  const { name, description, price, userId } = req.body;
+  const { name, description, price } = req.body;
 
   if (!name)
     return res.status(400).json({ message: "product name is required" });
@@ -54,7 +54,7 @@ const addProduct = async (req, res) => {
       name,
       description,
       image: imageUrl,
-      user: userId,
+      user: req.user._id,
       price,
     });
 

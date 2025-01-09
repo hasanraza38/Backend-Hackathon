@@ -29,12 +29,12 @@ const userSchema = new Schema(
         ref: "Product",
       },
     ],
-    // orders: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Order",
-    //   },
-    // ],
+    orders: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Order",
+      },
+    ],
   },
   {
     timestamps: true, 
