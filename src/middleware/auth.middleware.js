@@ -14,7 +14,6 @@ const authenticateUser = async (req, res, next) => {
       next();
     });
   };
- 
   // authenticate user middleware
 
   export  {authenticateUser}

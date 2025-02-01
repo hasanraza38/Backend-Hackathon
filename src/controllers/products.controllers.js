@@ -55,7 +55,7 @@ const addProduct = async (req, res) => {
       description,
       image: imageUrl,
       user: req.user._id,
-      price,
+      price
     });
 
     res.status(201).json({

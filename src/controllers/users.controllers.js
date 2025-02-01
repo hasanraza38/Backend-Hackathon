@@ -29,7 +29,7 @@ const generateAccessToken = (user) => {
 //generate refresh token
 const generateRefreshToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "7d" ,
   });
 };
 //generate refresh token

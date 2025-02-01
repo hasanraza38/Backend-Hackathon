@@ -21,7 +21,7 @@ const placeOrder = async (req, res) => {
     const order = await Order.create({
       user: req.user._id,
       products,
-      totalPrice,
+      totalPrice
     });
 
     res.status(201).json({
