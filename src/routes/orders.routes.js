@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post("/placeorder", authenticateUser, placeOrder);
 router.get("/getallorders", authenticateUser, getUserOrders); 
-router.get("/getorder/:id", authenticateUser, getOrderById);
+router.get("/getorder/:id", authenticateUser, getOrderById)
 
 export default router;

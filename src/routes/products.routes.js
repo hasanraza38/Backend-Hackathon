@@ -4,7 +4,7 @@ import { upload } from "../middleware/multer.middleware.js";
 import { authenticateUser } from "../middleware/auth.middleware.js";
 
 
-const router = express.Router();
+const router = express.Router()
 
 router.post("/addproduct",authenticateUser,upload.single("image"), addProduct);
 router.get("/getallproducts", getAllProducts);
