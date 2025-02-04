@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import Users from "../models/users.models.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -141,4 +142,61 @@ const logoutUser = async (req, res) => {
 
 
 
-export { registerUser, loginUser, refreshToken, logoutUser, };
+// dashboard
+const getDashboardData = async (req, res) => {
+  try {
+    // Get user from verifyJWT middleware
+    const userId = req.userId;
+
+    // Find user and populate products and orders
+    const user = await Users.findById(userId)
+      .select("-password") // Exclude password
+      .populate({
+        path: "Products",
+        select: "name price description", // Select fields to return
+      })
+      .populate({
+        path: "Order",
+        select: "totalAmount status items", // Select fields to return
+        populate: {
+          path: "items.product",
+          select: "name price",
+        },
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Dashboard data retrieved successfully",
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        products: user.products,
+        orders: user.orders,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
+
+  } catch (error) {
+    console.error("Dashboard error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching dashboard data",
+      error: error.message,
+    });
+  }
+};
+// dashboard
+
+
+
+export { registerUser, loginUser, refreshToken, logoutUser, getDashboardData };
