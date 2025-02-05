@@ -93,7 +93,7 @@ const loginUser = async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  res.cookie("refreshToken", refreshToken, { http: true, secure: true });
+  res.cookie("refreshToken", refreshToken, { http: false, secure: false });
 
   res.json({
     message: "user logged in successfuly",
