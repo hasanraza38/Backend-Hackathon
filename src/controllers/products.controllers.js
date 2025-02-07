@@ -2,29 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import Products from "../models/products.models.js";
-import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 
-//cloudinary Configuration
-cloudinary.config({
-  cloud_name: "dgybydntn",
-  api_key: "137697474661646",
-  api_secret:"OvUu_5L_iyJlxp9Cy0D14ZJGzhk" ,
-});
 
-// upload image function
-const uploadImageToCloudinary = async (localpath) => {
-  try {
-    const uploadResult = await cloudinary.uploader.upload(localpath, {
-      resource_type: "auto",
-    });
-    fs.unlinkSync(localpath);
-    return uploadResult.url;
-  } catch (error) {
-    fs.unlinkSync(localpath);
-    return null;
-  }
-};
 
 //Add Product
 const addProduct = async (req, res) => {
