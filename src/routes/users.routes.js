@@ -7,12 +7,24 @@ import {
     getDashboardData,
 } from "../controllers/users.controllers.js";
 // import { authenticateUser } from "../middleware/auth.middleware.js";
-
+import { upload } from "../middleware/multer.";
 
 
 const router = express.Router()
-
-router.post("/registeruser", registerUser);
+router.post("/registeruser",
+    upload.fields([
+        {
+            name: "avatar",
+            maxCount: 1
+        }, 
+        {
+            name: "coverImage",
+            maxCount: 1
+        }
+    ]),
+    registerUser
+    )
+// router.post("/registeruser", registerUser);
 router.post("/loginuser", loginUser);
 router.get("/logoutuser", logoutUser);
 router.get("/getdashboard",getDashboardData);

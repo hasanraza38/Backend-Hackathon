@@ -18,6 +18,9 @@ const transporter = nodemailer.createTransport({
 
 
 
+
+
+
 //generate accesstoken
 const generateAccessToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.ACCESS_JWT_SECRET, {
@@ -51,10 +54,23 @@ const registerUser = async (req, res) => {
     const user = await Users.findOne({ email: email });
     if (user) return res.status(401).json({ message: "user already exist" });
 
+
+    let imageUrl = null;
+
+    if (req.file) {
+      const uploadResult = await uploadOnCloudinary(req.file.path);
+      if (!uploadResult) {
+        return res
+          .status(500)
+          .json({ message: "Error occurred while uploading the image" });
+      }
+      imageUrl = uploadResult;
+    }
     const createUser = await Users.create({
       username,
       email,
       password,
+      
     });
 
     res.status(201).json({ message: "user registered successfully", data: createUser });

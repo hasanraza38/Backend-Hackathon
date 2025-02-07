@@ -2,6 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import Products from "../models/products.models.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 
 
 
@@ -20,7 +22,7 @@ const addProduct = async (req, res) => {
     let imageUrl = null;
 
     if (req.file) {
-      const uploadResult = await uploadImageToCloudinary(req.file.path);
+      const uploadResult = await uploadOnCloudinary(req.file.path);
       if (!uploadResult) {
         return res
           .status(500)
