@@ -6,7 +6,7 @@ import {
     refreshToken,
     getDashboardData,
 } from "../controllers/users.controllers.js";
-import { authenticateUser } from "../middleware/auth.middleware.js";
+// import { authenticateUser } from "../middleware/auth.middleware.js";
 
 
 
@@ -15,7 +15,7 @@ const router = express.Router()
 router.post("/registeruser", registerUser);
 router.post("/loginuser", loginUser);
 router.get("/logoutuser", logoutUser);
-router.get("/getdashboard",authenticateUser, getDashboardData);
+router.get("/getdashboard",getDashboardData);
 router.post("/refreshtoken", refreshToken);
 
 
