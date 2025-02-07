@@ -7,7 +7,7 @@ import {
     getDashboardData,
 } from "../controllers/users.controllers.js";
 // import { authenticateUser } from "../middleware/auth.middleware.js";
-import { upload } from "../middleware/multer.";
+import { upload } from "../middleware/multer.middleware.js";
 
 
 const router = express.Router()
