@@ -1,8 +1,8 @@
 import Stripe from "stripe";
 
 const stripe = new Stripe(
-  "sk_test_51QbqY7CA9jwoGPd7FM7FcspHrhWi4g1V7FicutKbZSxQc90Ih5XeK2sTFdabtpUGS4SwoOwBNQpPKlVtKdI3PenW00cFiofLXN"
-    // process.env.SECRET_KEY
+  
+    process.env.SECRET_KEY || 'api_key_placeholder'
 );
 
 const checkout = async (req, res) => {
