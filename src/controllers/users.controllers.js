@@ -30,13 +30,13 @@ const generateAccessToken = (user) => {
 //generate accesstoken
 
 
-//generate refresh token
-// const generateRefreshToken = (user) => {
-//   return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_SECRET, {
-//     expiresIn: "7d" ,
-//   });
-// };
-//generate refresh token
+// generate refresh token
+const generateRefreshToken = (user) => {
+  return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_SECRET, {
+    expiresIn: "7d" ,
+  });
+};
+// generate refresh token
 
 
 //Register User
@@ -108,14 +108,14 @@ const loginUser = async (req, res) => {
   return res.status(400).json({ message: "incorrect password" });
 
   const accessToken = generateAccessToken(user);
-  // const refreshToken = generateRefreshToken(user);
+  const refreshToken = generateRefreshToken(user);
 
-  // res.cookie("refreshToken", refreshToken, { http: false, secure: false });
+  res.cookie("refreshToken", refreshToken, { http: false, secure: false });
 
   res.json({
     message: "user logged in successfuly",
     accessToken,
-    // refreshToken,
+    refreshToken,
     data: user,
   });
 };
