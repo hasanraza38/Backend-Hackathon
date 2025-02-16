@@ -70,7 +70,7 @@ const registerUser = async (req, res) => {
       username,
       email,
       password,
-      
+      avatar: imageUrl,      
     });
 
     res.status(201).json({ message: "user registered successfully", data: createUser });
@@ -110,7 +110,11 @@ const loginUser = async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  res.cookie("refreshToken", refreshToken, { http: false, secure: false });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    });
 
   res.json({
     message: "user logged in successfuly",
