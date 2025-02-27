@@ -110,11 +110,14 @@ const loginUser = async (req, res) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  res.cookie("refreshToken", refreshToken, {
+
+  const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "Strict",
-    });
+    secure: true
+}
+
+  res.cookie("refreshToken", refreshToken, options);
+  res.cookie("accessToken", accessToken, options);
 
   res.json({
     message: "user logged in successfuly",
