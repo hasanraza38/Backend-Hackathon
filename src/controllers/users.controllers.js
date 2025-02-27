@@ -17,14 +17,10 @@ const transporter = nodemailer.createTransport({
 // nodemailer
 
 
-
-
-
-
 //generate accesstoken
 const generateAccessToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.ACCESS_JWT_SECRET, {
-    expiresIn: ACCESS_TOKEN_EXPIRY,
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
   });
 };
 //generate accesstoken
@@ -33,10 +29,11 @@ const generateAccessToken = (user) => {
 // generate refresh token
 const generateRefreshToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_SECRET, {
-    expiresIn: REFRESH_TOKEN_EXPIRY ,
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY ,
   });
 };
 // generate refresh token
+
 
 
 //Register User
@@ -114,17 +111,20 @@ const loginUser = async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true
-}
-
-  res.cookie("refreshToken", refreshToken, options);
-  res.cookie("accessToken", accessToken, options);
-
-  res.json({
+  }
+  
+  return res
+  .status(200)
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", refreshToken, options)
+  .json({
     message: "user logged in successfuly",
     accessToken,
     refreshToken,
     data: user,
-  });
+  }
+)
+
 };
 // login User
 
@@ -153,8 +153,6 @@ const refreshToken = async (req, res) => {
             secure: true
         }
 
-  
-  
   return res
   .cookie("accessToken", accessToken, options)
   .cookie("refreshToken", newRefreshToken, options)
@@ -163,7 +161,8 @@ const refreshToken = async (req, res) => {
        accessToken, 
        refreshToken: newRefreshToken }
     );
-  } catch (error) {
+  }
+  catch(error) {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
