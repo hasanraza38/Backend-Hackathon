@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport({
 //generate accesstoken
 const generateAccessToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.ACCESS_JWT_SECRET, {
-    expiresIn: "6h",
+    expiresIn: ACCESS_TOKEN_EXPIRY,
   });
 };
 //generate accesstoken
@@ -33,7 +33,7 @@ const generateAccessToken = (user) => {
 // generate refresh token
 const generateRefreshToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.REFRESH_JWT_SECRET, {
-    expiresIn: "7d" ,
+    expiresIn: REFRESH_TOKEN_EXPIRY ,
   });
 };
 // generate refresh token
@@ -145,8 +145,24 @@ const refreshToken = async (req, res) => {
       return res.status(404).json({ message: "invalid token" });
     }
 
-    const generateToken = generateAccessToken(user);
-    return res.json({ message: "access token generated", accessToken: generateToken });
+    const accessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+    
+ const options = {
+            httpOnly: true,
+            secure: true
+        }
+
+  
+  
+  return res
+  .cookie("accessToken", accessToken, options)
+  .cookie("refreshToken", newRefreshToken, options)
+  .json({
+       message: "access token generated",
+       accessToken, 
+       refreshToken: newRefreshToken }
+    );
   } catch (error) {
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
