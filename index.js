@@ -2,19 +2,19 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import connectDB from "./src/db/index.js";
-import cookieParser from "cookie-parser";
 import cors from "cors";
 import usersRoutes from "./src/routes/users.routes.js";
 import productRoutes from "./src/routes/products.routes.js";
 import ordersRoutes from "./src/routes/orders.routes.js";
 import checkoutRoutes from "./src/routes/checkout.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
-const port =process.env.PORT;
+const port = process.env.PORT;
 
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

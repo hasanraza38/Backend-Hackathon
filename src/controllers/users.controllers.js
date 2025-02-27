@@ -110,7 +110,8 @@ const loginUser = async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true
+    secure: process.env.NODE_ENV === "production" ? true : false,
+    sameSite: "strict",
   }
   
   return res
@@ -122,6 +123,7 @@ const loginUser = async (req, res) => {
     accessToken,
     refreshToken,
     data: user,
+
   }
 )
 
